@@ -23,6 +23,6 @@
 
 Alt+F8キーでマクロを呼び出し、ExecuteChatGPTを実行すると選択範囲にのみ応答を出力します。
 
-関数に与える引数はSheet1~3のように設定します。
+関数に与える引数は下図のように設定します。
 
 ![image](https://github.com/ikuma-hiroyuki/ExcelChatGPT/blob/master/sample1.png)
