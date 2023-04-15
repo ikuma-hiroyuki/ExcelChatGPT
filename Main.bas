@@ -18,8 +18,6 @@ End Sub
 
 Public Function ChatGPT(ByVal userContent1 As String, Optional ByVal userContent2 As String, _
                         Optional ByVal output As String, Optional ByVal role As String) As String
-Attribute ChatGPT.VB_Description = "ChatGPTに問い合わせます。"
-Attribute ChatGPT.VB_ProcData.VB_Invoke_Func = " \n14"
 '----------------------------------------------------------------------------------------------------
 ' Procedure : ChatGPT
 ' DateTime  : 2023/04/14
@@ -33,10 +31,10 @@ Attribute ChatGPT.VB_ProcData.VB_Invoke_Func = " \n14"
 ' Output    : String - GPTが生成した応答
 '----------------------------------------------------------------------------------------------------
     On Error GoTo ErrHandler
-    
+
     'APIの設定
     Dim settings As GptSettings: Set settings = New GptSettings
-    
+
     'リクエストのロールと内容の設定
     Dim requestMessage As ChatRequest: Set requestMessage = New ChatRequest
     With requestMessage
@@ -48,24 +46,24 @@ Attribute ChatGPT.VB_ProcData.VB_Invoke_Func = " \n14"
         If userContent2 <> vbNullString Then .AddMessage("user") = userContent2
         If output <> vbNullString Then .AddMessage("system") = "出力形式は 「" & output & "」とすること。"
     End With
-    
+
     'HTTP リクエスト
     Dim http As MSXML2.XMLHTTP60: Set http = New MSXML2.XMLHTTP60
     With http
         'リクエスト送信先の設定
         .Open "POST", settings.ApiURL
-        
+
         'ヘッダーの設定
         .setRequestHeader "Content-Type", "application/json"
         .setRequestHeader "Authorization", "Bearer " & settings.ApiKEY
-        
+
         'リクエストの送信
         Dim json As String: json = requestMessage.GenerateJson
         .send json
-        
+
         'レスポンスの取得
         Dim parsed As Scripting.Dictionary: Set parsed = JsonConverter.ParseJson(.responseText)
-        
+
         'GPTからの回答を出力
         If InStr(.responseText, """error"": {") > 0 Then
             ChatGPT = parsed("error")("message")
@@ -73,12 +71,10 @@ Attribute ChatGPT.VB_ProcData.VB_Invoke_Func = " \n14"
             ChatGPT = parsed("choices")(1)("message")("content")
         End If
     End With
-    
+
     DoEvents '途中経過を出力するために DoEvents
     Exit Function
 
 ErrHandler:
     MsgBox Err.Description, vbCritical, "エラー"
 End Function
-
-
