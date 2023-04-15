@@ -8,8 +8,7 @@
 
 設定シートに必要情報を入力
 
-![image](C:\Users\ikuma\OneDrive\B\EXCEL\ChatGPT\sample0.png)
-
+![image](https://github.com/ikuma-hiroyuki/ExcelChatGPT/blob/master/sample0.png)
 
 
 ## ワークシート関数としての ChatGPT関数
@@ -24,6 +23,6 @@
 
 Alt+F8キーでマクロを呼び出し、ExecuteChatGPTを実行すると選択範囲にのみ応答を出力します。
 
-関数に与える引数はSheet1~3のように設定します。
+関数に与える引数は下図のように設定します。
 
-![image](C:\Users\ikuma\OneDrive\B\EXCEL\ChatGPT\sample1.png)
+![image](https://github.com/ikuma-hiroyuki/ExcelChatGPT/blob/master/sample1.png)
