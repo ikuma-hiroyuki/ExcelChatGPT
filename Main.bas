@@ -4,7 +4,7 @@ Option Explicit
 
 '@EntryPoint
 Public Sub ExecuteChatGPT()
-    '‘I‘ğ”ÍˆÍ‚É‘Î‚µ‚ÄChatGPT‚ğÀs‚·‚é
+    'é¸æŠç¯„å›²ã«å¯¾ã—ã¦ChatGPTã‚’å®Ÿè¡Œã™ã‚‹
     Dim rg As Range
     For Each rg In Selection
         Dim content1 As String, content2 As String, output As String, role As String
@@ -12,6 +12,8 @@ Public Sub ExecuteChatGPT()
         content2 = Cells(rg.Row, "C")
         output = Cells(rg.Row, "B")
         role = Cells(rg.Row, "A")
+        rg.Value = ChatGPT(content1, content2, output, role)
+        DoEvents
         rg.Value = ChatGPT(content1, content2, output, role)
     Next
 End Sub
@@ -22,49 +24,49 @@ Public Function ChatGPT(ByVal userContent1 As String, Optional ByVal userContent
 ' Procedure : ChatGPT
 ' DateTime  : 2023/04/14
 ' Author    : ikuma
-' Purpose   : —^‚¦‚ç‚ê‚½ƒ†[ƒU[ƒRƒ“ƒeƒ“ƒc‚ğg—p‚µ‚ÄAOpenAI‚ÌChatGPT API‚ÉƒAƒNƒZƒX‚µA¶¬‚³‚ê‚½‰“š‚ğ•Ô‚µ‚Ü‚·B
-'           : ƒIƒvƒVƒ‡ƒ“‚ÅA’Ç‰Á‚Ìƒ†[ƒU[ƒRƒ“ƒeƒ“ƒcAo—ÍŒ`®Aƒ[ƒ‹‚ğw’è‚Å‚«‚Ü‚·B
-' Input     : ByVal userContent1 As String          - Å‰‚Ìƒ†[ƒU[ƒRƒ“ƒeƒ“ƒc
-'           : Optional ByVal userContent2 As String - “ñ”Ô–Ú‚Ìƒ†[ƒU[ƒRƒ“ƒeƒ“ƒciƒIƒvƒVƒ‡ƒ“j
-'           : Optional ByVal output As String       - o—ÍŒ`®iƒIƒvƒVƒ‡ƒ“j
-'           : Optional ByVal role As String         - ƒ[ƒ‹iƒIƒvƒVƒ‡ƒ“j
-' Output    : String - GPT‚ª¶¬‚µ‚½‰“š
+' Purpose   : ä¸ãˆã‚‰ã‚ŒãŸãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã‚’ä½¿ç”¨ã—ã¦ã€OpenAIã®ChatGPT APIã«ã‚¢ã‚¯ã‚»ã‚¹ã—ã€ç”Ÿæˆã•ã‚ŒãŸå¿œç­”ã‚’è¿”ã—ã¾ã™ã€‚
+'           : ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã§ã€è¿½åŠ ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã€å‡ºåŠ›å½¢å¼ã€ãƒ­ãƒ¼ãƒ«ã‚’æŒ‡å®šã§ãã¾ã™ã€‚
+' Input     : ByVal userContent1 As String          - æœ€åˆã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚³ãƒ³ãƒ†ãƒ³ãƒ„
+'           : Optional ByVal userContent2 As String - äºŒç•ªç›®ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ï¼ˆã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼‰
+'           : Optional ByVal output As String       - å‡ºåŠ›å½¢å¼ï¼ˆã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼‰
+'           : Optional ByVal role As String         - ãƒ­ãƒ¼ãƒ«ï¼ˆã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼‰
+' Output    : String - GPTãŒç”Ÿæˆã—ãŸå¿œç­”
 '----------------------------------------------------------------------------------------------------
     On Error GoTo ErrHandler
 
-    'API‚Ìİ’è
+    'APIã®è¨­å®š
     Dim settings As GptSettings: Set settings = New GptSettings
 
-    'ƒŠƒNƒGƒXƒg‚Ìƒ[ƒ‹‚Æ“à—e‚Ìİ’è
+    'ãƒªã‚¯ã‚¨ã‚¹ãƒˆã®ãƒ­ãƒ¼ãƒ«ã¨å†…å®¹ã®è¨­å®š
     Dim requestMessage As ChatRequest: Set requestMessage = New ChatRequest
     With requestMessage
-        'Šî–{İ’è
+        'åŸºæœ¬è¨­å®š
         Set .SetSettings = settings
-        'ƒ[ƒ‹‚Ìİ’è
+        'ãƒ­ãƒ¼ãƒ«ã®è¨­å®š
         If role <> vbNullString Then .AddMessage("system") = role
         .AddMessage("user") = userContent1
         If userContent2 <> vbNullString Then .AddMessage("user") = userContent2
-        If output <> vbNullString Then .AddMessage("system") = "o—ÍŒ`®‚Í u" & output & "v‚Æ‚·‚é‚±‚ÆB"
+        If output <> vbNullString Then .AddMessage("system") = "å‡ºåŠ›å½¢å¼ã¯ ã€Œ" & output & "ã€ã¨ã™ã‚‹ã“ã¨ã€‚"
     End With
 
-    'HTTP ƒŠƒNƒGƒXƒg
+    'HTTP ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
     Dim http As MSXML2.XMLHTTP60: Set http = New MSXML2.XMLHTTP60
     With http
-        'ƒŠƒNƒGƒXƒg‘—Mæ‚Ìİ’è
+        'ãƒªã‚¯ã‚¨ã‚¹ãƒˆé€ä¿¡å…ˆã®è¨­å®š
         .Open "POST", settings.ApiURL
 
-        'ƒwƒbƒ_[‚Ìİ’è
+        'ãƒ˜ãƒƒãƒ€ãƒ¼ã®è¨­å®š
         .setRequestHeader "Content-Type", "application/json"
         .setRequestHeader "Authorization", "Bearer " & settings.ApiKEY
 
-        'ƒŠƒNƒGƒXƒg‚Ì‘—M
+        'ãƒªã‚¯ã‚¨ã‚¹ãƒˆã®é€ä¿¡
         Dim json As String: json = requestMessage.GenerateJson
         .send json
 
-        'ƒŒƒXƒ|ƒ“ƒX‚Ìæ“¾
+        'ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã®å–å¾—
         Dim parsed As Scripting.Dictionary: Set parsed = JsonConverter.ParseJson(.responseText)
 
-        'GPT‚©‚ç‚Ì‰ñ“š‚ğo—Í
+        'GPTã‹ã‚‰ã®å›ç­”ã‚’å‡ºåŠ›
         If InStr(.responseText, """error"": {") > 0 Then
             ChatGPT = parsed("error")("message")
         Else
@@ -72,9 +74,9 @@ Public Function ChatGPT(ByVal userContent1 As String, Optional ByVal userContent
         End If
     End With
 
-    DoEvents '“r’†Œo‰ß‚ğo—Í‚·‚é‚½‚ß‚É DoEvents
+    DoEvents 'é€”ä¸­çµŒéã‚’å‡ºåŠ›ã™ã‚‹ãŸã‚ã« DoEvents
     Exit Function
 
 ErrHandler:
-    MsgBox Err.Description, vbCritical, "ƒGƒ‰["
+    MsgBox Err.Description, vbCritical, "ã‚¨ãƒ©ãƒ¼"
 End Function
